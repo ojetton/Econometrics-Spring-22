@@ -1,0 +1,42 @@
+---
+title: "Problem Set 1"
+author: "Owen Jetton"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+#This block code will make knitting faster by saving output of code chunks.
+knitr::opts_chunk$set(cache = T)
+  # Note that code chunks won't re-run unless you edit them
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(dplyr, ggplot2, lubridate, tidyverse)
+
+setwd("/Users/owenjetton/Documents/PhD Year 1/Homeworks/Spring 2022")
+
+```
+
+## Question 1
+
+```{r Data}
+data = read.csv("data-001.csv")
+```
+
+
+## Question 2
+
+```{r Regression}
+
+reg1 = lm(data = data,
+          formula = income_black_2010 ~ pop_enslaved_1860 + pop_total_1860 + pop_total_2010)
+
+reg1$coefficients[["pop_enslaved_1860"]]
+
+```
+
+
+
+
+
+
+
