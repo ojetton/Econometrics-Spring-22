@@ -56,7 +56,7 @@ reg_q3 = solve(t(X) %*% X) %*% t(X) %*% Y
 reg_q3[2,1]
 ```
 
-The coefficient on "pop_enslaved_1980" is `r `reg_q3[2,1]` which is the same as in question 2.
+The coefficient on "pop_enslaved_1980" is `r reg_q3[2,1]` which is the same as in question 2.
 
 
 ## Question 4
