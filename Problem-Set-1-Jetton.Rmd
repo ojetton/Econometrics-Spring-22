@@ -81,7 +81,9 @@ reg_fun2 = function(y, x) {
   coef = solve(t(x) %*% x) %*% t(x) %*% y
   
   # standard errors
+    # error (residuals)
   e = (y - x %*% coef)
+    # standard error calculation
   s_sq = (1/(dim(x)[1] - dim(x)[2]-1))*sum(e^2)
   
   # calculate variance matrix
@@ -90,19 +92,37 @@ reg_fun2 = function(y, x) {
   # arrange the results
   stnd_errors = sqrt(diag(variance_matrix))
   
-  return(stnd_errors)
+  results = cbind(coef, stnd_errors)
+  
+  return(results)
   
 }
 
+```
+
+Results:
+
+```{r}
 reg_fun2(Y, X)
+
+summary(reg1)
 
 ```
 
+My function reports the coefficients and standard error correctly.
+
+## Question 6
+
+To be approximately correct, the standard errors reported from my function rely on the assumptions of homoskedasticity, nonautocorrelation, and normally distributed errors: 
+$$ \epsilon | X \sim N(0, \sigma^2 I) $$ 
+## Question 7
+
+In order for my coefficients to be interpretable as causal, one needs to assume
 
 
 
 
-
+## Extra Credit
 
 
 
