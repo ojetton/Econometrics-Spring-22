@@ -115,14 +115,57 @@ My function reports the coefficients and standard error correctly.
 
 To be approximately correct, the standard errors reported from my function rely on the assumptions of homoskedasticity, nonautocorrelation, and normally distributed errors: 
 $$ \epsilon | X \sim N(0, \sigma^2 I) $$ 
+
 ## Question 7
 
-In order for my coefficients to be interpretable as causal, one needs to assume
-
+In order for my coefficients to be interpretable as causal, one needs to assume that the model we're estimating is the true model, that there are no omitted relevant variables, that the exogenous variables are in fact *exogenous*.
 
 
 
 ## Extra Credit
+
+```{r Extra Credit}
+
+p_load(ivmte)
+
+reg_fun3 = function(data, var_y, var_x) {
+
+  y = as.matrix(data %>% select(all_of(var_y)))
+  
+  x = as.matrix(cbind(intercept = c(rep(1, length(y))), 
+                      data %>% select(all_of(var_x))))
+  
+  # coefficient equation
+  coef = solve(t(x) %*% x) %*% t(x) %*% y
+  
+  # standard errors
+    # error (residuals)
+  e = (y - x %*% coef)
+    # standard error calculation
+  s_sq = (1/(dim(x)[1] - dim(x)[2]-1))*sum(e^2)
+  
+  # calculate variance matrix
+  variance_matrix = s_sq * solve(t(x) %*% x)
+  
+  # arrange the results
+  stnd_errors = sqrt(diag(variance_matrix))
+  
+  results = cbind(coef, stnd_errors)
+  
+  return(results)
+  
+}
+```
+
+# Results:
+
+```{r Extra Credit Results}
+reg_fun3(data = data, 
+         var_y = c("income_black_2010"), 
+         var_x = c("pop_enslaved_1860", "pop_total_1860", "pop_total_2010")
+)
+
+```
 
 
 
