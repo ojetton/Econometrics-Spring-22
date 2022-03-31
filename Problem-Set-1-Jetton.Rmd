@@ -1,6 +1,7 @@
 ---
 title: "Problem Set 1"
 author: "Owen Jetton"
+date: "04/06/2022"
 output: pdf_document
 ---
 
@@ -12,7 +13,7 @@ knitr::opts_chunk$set(cache = T)
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(dplyr, ggplot2, lubridate, tidyverse)
 
-setwd("/Users/owenjetton/Documents/PhD Year 1/Homeworks/Spring 2022")
+setwd("/Users/owenjetton/Documents/PhD Year 1/Homeworks/Spring 2022/Econometrics-Spring-22")
 
 ```
 
@@ -20,6 +21,9 @@ setwd("/Users/owenjetton/Documents/PhD Year 1/Homeworks/Spring 2022")
 
 ```{r Data}
 data = read.csv("data-001.csv")
+
+
+
 ```
 
 
@@ -30,9 +34,71 @@ data = read.csv("data-001.csv")
 reg1 = lm(data = data,
           formula = income_black_2010 ~ pop_enslaved_1860 + pop_total_1860 + pop_total_2010)
 
-reg1$coefficients[["pop_enslaved_1860"]]
+q2_coef = reg1$coefficients[["pop_enslaved_1860"]]
 
 ```
+
+The coefficient on "pop_enslaved_1980" is `r q2_coef`
+
+
+## Question 3
+
+```{r Matrix Regression}
+# endogenous variable
+Y = as.matrix(data$income_black_2010)
+
+# exogenous variables (with intercept)
+X = matrix(c(rep(1, 710), data$pop_enslaved_1860, data$pop_total_1860, data$pop_total_2010), 
+                    ncol = 4)
+
+reg_q3 = solve(t(X) %*% X) %*% t(X) %*% Y
+
+reg_q3[2,1]
+```
+
+The coefficient on "pop_enslaved_1980" is `r `reg_q3[2,1]` which is the same as in question 2.
+
+
+## Question 4
+
+```{r Regression Function}
+
+reg_fun = function(y, x) {
+  coef = solve(t(x) %*% x) %*% t(x) %*% y
+  
+  return(coef)
+}
+
+```
+
+## Question 5
+
+```{r Regression function With Standard Errors}
+
+reg_fun2 = function(y, x) {
+  
+  # coefficient equation
+  coef = solve(t(x) %*% x) %*% t(x) %*% y
+  
+  # standard errors
+  e = (y - x %*% coef)
+  s_sq = (1/(dim(x)[1] - dim(x)[2]-1))*sum(e^2)
+  
+  # calculate variance matrix
+  variance_matrix = s_sq * solve(t(x) %*% x)
+  
+  # arrange the results
+  stnd_errors = sqrt(diag(variance_matrix))
+  
+  return(stnd_errors)
+  
+}
+
+reg_fun2(Y, X)
+
+```
+
+
 
 
 
