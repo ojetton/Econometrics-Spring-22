@@ -6,9 +6,8 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-#This block code will make knitting faster by saving output of code chunks.
+#This code will make knitting faster by saving output of code chunks.
 knitr::opts_chunk$set(cache = T)
-  # Note that code chunks won't re-run unless you edit them
 
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(dplyr, ggplot2, lubridate, tidyverse)
@@ -21,8 +20,6 @@ setwd("/Users/owenjetton/Documents/PhD Year 1/Homeworks/Spring 2022/Econometrics
 
 ```{r Data}
 data = read.csv("data-001.csv")
-
-
 
 ```
 
@@ -40,7 +37,7 @@ summary(reg1)
 ```
 
 The coefficient on "pop_enslaved_1860" is `r q2_coef`
-
+This tells us that as the population of enslaved individuals of a county in 1860 increases by 1, the median income for black households in 2010 in that county changes by $ `r q2_coef`
 
 ## Question 3
 
@@ -57,7 +54,7 @@ reg_q3 = solve(t(X) %*% X) %*% t(X) %*% Y
 reg_q3[2,1]
 ```
 
-The coefficient on "pop_enslaved_1980" is `r reg_q3[2,1]` which is the same as in question 2.
+The coefficient on "pop_enslaved_1860" is `r reg_q3[2,1]` which is the same as in question 2.
 
 
 ## Question 4
@@ -77,6 +74,8 @@ Results:
 reg_fun(Y, X)
 
 ```
+
+Success!
 
 ## Question 5
 
@@ -119,7 +118,7 @@ My function reports the coefficients and standard errors correctly.
 ## Question 6
 
 To be approximately correct, the standard errors reported from my function rely on the assumptions of homoskedasticity, nonautocorrelation, and normally distributed errors: 
-$$ \epsilon | X \sim N(0, \sigma^2 I) $$ 
+$$\epsilon | X \sim N(0, \sigma^2 I) $$
 
 ## Question 7
 
@@ -170,5 +169,5 @@ reg_fun3(data = data,
 
 ```
 
-
+Success!
 
