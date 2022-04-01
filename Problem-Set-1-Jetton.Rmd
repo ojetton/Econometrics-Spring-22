@@ -39,7 +39,7 @@ q2_coef = reg1$coefficients[["pop_enslaved_1860"]]
 summary(reg1)
 ```
 
-The coefficient on "pop_enslaved_1980" is `r q2_coef`
+The coefficient on "pop_enslaved_1860" is `r q2_coef`
 
 
 ## Question 3
@@ -69,6 +69,12 @@ reg_fun = function(y, x) {
   
   return(coef)
 }
+```
+
+Results:
+
+```{r}
+reg_fun(Y, X)
 
 ```
 
@@ -108,7 +114,7 @@ reg_fun2(Y, X)
 
 ```
 
-My function reports the coefficients and standard error correctly.
+My function reports the coefficients and standard errors correctly.
 
 ## Question 6
 
