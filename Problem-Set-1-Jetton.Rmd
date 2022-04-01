@@ -36,6 +36,7 @@ reg1 = lm(data = data,
 
 q2_coef = reg1$coefficients[["pop_enslaved_1860"]]
 
+summary(reg1)
 ```
 
 The coefficient on "pop_enslaved_1980" is `r q2_coef`
@@ -83,7 +84,7 @@ reg_fun2 = function(y, x) {
   # standard errors
     # error (residuals)
   e = (y - x %*% coef)
-    # standard error calculation
+    # variance sigma estimate calculation
   s_sq = (1/(dim(x)[1] - dim(x)[2]-1))*sum(e^2)
   
   # calculate variance matrix
@@ -105,8 +106,6 @@ Results:
 ```{r}
 reg_fun2(Y, X)
 
-summary(reg1)
-
 ```
 
 My function reports the coefficients and standard error correctly.
@@ -125,8 +124,6 @@ In order for my coefficients to be interpretable as causal, one needs to assume 
 ## Extra Credit
 
 ```{r Extra Credit}
-
-p_load(ivmte)
 
 reg_fun3 = function(data, var_y, var_x) {
 
