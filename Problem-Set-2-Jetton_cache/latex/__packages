@@ -1,0 +1,15 @@
+pacman
+dplyr
+tidyverse
+ggplot2
+tibble
+tidyr
+readr
+purrr
+stringr
+forcats
+stargazer
+fixest
+magrittr
+pander
+kableExtra
