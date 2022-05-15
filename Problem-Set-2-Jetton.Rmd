@@ -119,8 +119,6 @@ The identifying assumptions necessary to interpret these results as causal are t
 
 ## Question 4
 
-#### 04 Now add a state fixed effect. Report your findings and discuss the conditional independence assumption required by the regression (for a causal interpretation).
-
 ```{r Question 2}
 
 reg_4.1 = feols(race_income_gap ~ had_rosenwald_school | state, data = data)
@@ -152,6 +150,9 @@ table3.1 = etable(reg_4.1,
 \end{tabular}
 
 -----
+
+The conditional independence assumption required by this regression for a causal interpretation is that conditional on the state a county is in, potential outcomes of racial income gaps in that county are independent of whether or not that county had a Rosenwald School.
+
 
 ## Question 5
 
@@ -198,23 +199,61 @@ table5.1 = etable(reg_5.1,
 
 ------
 
-06 Does the change in the estimated coefficients on had_rosenwald_school from 04 and 06 suggest match what you would have guessed if these new variables (pct_pop_enslaved_1860 and pop_total_1860) were causing bias? Explain.
+## Question 6
 
-```{r}
+If these new variables (pct_pop_enslaved_1860 & pop_total_1860) were causing bias in the regression in question 4, then I would suspect them to be upward biasing factors -- since Rosenwald schools were located in areas with high Black populations (as shown in the histograms above), which will likely also be highly populated areas in general -- making both of these new variables positively correlated with had_rosenwald_school. Additionally, it makes sense that they would also correlate positively with the race income gap. Since the estimated coefficient on had_rosenwald_school dropped dramatically after adding the new variables into the regression, the omitted variables were biasing the estimate positively, which matches my intuition. 
+
+## Question 7
+
+07 What is the required conditional independence assumption required by 05? Do you think it is valid? Explain your answer using a DAG (and discuss which variables should and should not be used as controls).
+
+
+The conditional independence assumption required by the regression in question 5 is that conditional on the percent of population of a county that was in enslaved in 1860 and the total population of that county, potential outcomes of racial income gaps are independent of whether or not that county had a Rosenwals school. 
+
+I do not believe this is a valid assumption.
+
+
+```{r question 7}
+p_load(ggdag)
+
+coordinates = list(
+  x = c(X = 0, Z = 1, W = 1, Y = 2), # Node name = x coordinate for that node
+  y = c(X = 1, Z = 0, W = 2, Y = 1) # Node name = y coordinate for that node
+)
+
+dag_7.1 = dagify(W ~~ X,
+                 Z ~~ X,
+                 Y ~ W,
+                 Y ~ Z,
+                 coords = coordinates,
+                 labels = c(Y = "Race Income Gap",
+                            X = "Had Rosenwald School",
+                            W = "Population Enslaved 1860",
+                            Z = "Total Population"))
+
+
+ggdag(dag_7.1, 
+      text = FALSE, 
+      use_labels = "label") +
+  theme_void()
+
+
 
 ```
 
-07 What is the required conditional independence assumption required by 06? Do you think it is valid? Explain your answer using a DAG (and discuss which variables should and should not be used as controls).
 
-```{r}
 
-```
+
+
+## Question 8
 
 08 What are your thoughts on adding the county's 2010 population (Black, White, and/or total) as a control in the regression? Will these controls help or hurt our CIA? Explain.
 
 ```{r}
 
 ```
+
+# Question 9
 
 09 Let's try some propensity-score matching. Step 1: Estimate some propensity scores!
 
@@ -232,6 +271,7 @@ Finally, you can grab those beautiful (estimated) propensity scores from your sa
 
 ```
 
+## Question 10
 
 10 Estimate a regression where you control for the original variables and for the estimated propensity scores. Does anything change?? Report your results.
 
