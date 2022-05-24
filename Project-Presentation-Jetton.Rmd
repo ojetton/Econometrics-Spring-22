@@ -1,0 +1,34 @@
+---
+title: "How Changes to Income Affect Personally Experienced Inflation"
+author: "Owen Jetton"
+date: "5/25/2022"
+output:
+  beamer_presentation: default
+  ioslides_presentation: default
+---
+
+## Motivation
+
+
+## Causal Question of Interest
+
+
+
+$$\pi_{t}^i = \frac{\sum_{l}{\theta_{l,t}^iP_{l,t}} - \sum_{l}{\theta_{l,t-1}^iP_{l,t-1}}} {\sum_{l}{\theta_{l,t-1}^iP_{l,t-1}}}$$
+
+
+## Potential Sources of Bias
+
+
+## Ideal Experiment
+
+
+## Practical Research Design
+
+
+
+
+
+$$\pi_{t}^i = [\theta_{t}^{i\prime}P_{t} - \theta_{t-1}^{i\prime}P_{t-1}] [\theta_{t-1}^{i\prime}P_{t-1}]^{-1}$$
+
+
