@@ -1,5 +1,5 @@
 ---
-title: "How Changes to Income Affect Personally Experienced Inflation"
+title: "How Income Changes Affect Personally Experienced Inflation"
 author: "Owen Jetton"
 date: "5/25/2022"
 output:
@@ -7,17 +7,67 @@ output:
   ioslides_presentation: default
 ---
 
+```{r echo = F}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
 ## Motivation
 
+Much is hidden in the Bureau of Labor Statistic’s monthly report of the Consumer Price Index that does not yield a holistic view of inflation’s effect on consumers and individuals in the U.S. economy.
+
+Literature review: 
+- Higher income individuals experience lower inflation through to access to product variety and innovation (Jaravel, 2017)
+- Lower income individuals experienced higher inflation for the costs of living during the Great Recession (Argente & Lee, 2015) 
 
 ## Causal Question of Interest
 
+If someone experiences an increase to their income, how does this cause their personally experienced inflation to change?
 
+Calculation of personally experienced inflation:
 
 $$\pi_{t}^i = \frac{\sum_{l}{\theta_{l,t}^iP_{l,t}} - \sum_{l}{\theta_{l,t-1}^iP_{l,t-1}}} {\sum_{l}{\theta_{l,t-1}^iP_{l,t-1}}}$$
+As vectors:
+$$\pi_{t}^i = [\theta_{t}^{i\prime}P_{t} - \theta_{t-1}^{i\prime}P_{t-1}] [\theta_{t-1}^{i\prime}P_{t-1}]^{-1}$$
 
 
 ## Potential Sources of Bias
+
+```{r echo = F}
+
+library(pacman)
+p_load(tidyverse)
+
+p_load(ggdag)
+
+coordinates = list(
+  x = c(N = 0, I = 1, B = 2, E = 3, P = 1.5, L = 2), # Node name = x coordinate for that node
+  y = c(N = 1, I = 1, B = 1, E = 1, P = 0, L = 2) # Node name = y coordinate for that node
+)
+
+dag = dagify(I ~ N + L,
+                 B ~ P + I,
+                 E ~ L + B,
+                 P ~ I,
+                 coords = coordinates,
+                 labels = c(N = "Nominal \n Income",
+                            I = "Purchasing \n Power",
+                            B = "Budget \n Allocations",
+                            E = "Personally \n Experienced \n Inflation ",
+                            P = "Preferences",
+                            L = "Price Level"))
+
+
+ggdag(dag, 
+      text = FALSE,
+      use_labels = "label") +
+  theme_dag()
+
+```
+
+
+
+
+
 
 
 ## Ideal Experiment
@@ -26,9 +76,81 @@ $$\pi_{t}^i = \frac{\sum_{l}{\theta_{l,t}^iP_{l,t}} - \sum_{l}{\theta_{l,t-1}^iP
 ## Practical Research Design
 
 
+## Possible Results: Positive Effect
+
+```{r echo = F}
+
+set.seed(11131998)
+
+data = tibble(
+  x = -12:12,
+  control = 2 + rnorm(25, 0, 0.2),
+  y_pos = if_else(x < 0, 2 + rnorm(25, 0, 0.2), 3 + rnorm(25, 0, 0.2)),
+  y_null = 2 + rnorm(25, 0, 0.2),
+  y_neg = if_else(x < 0, 2 + rnorm(25, 0, 0.2), 1 + rnorm(25, 0, 0.2))
+)
+
+avg_b = data %>% 
+          filter(x < 0) %>% 
+          summarize(c_avg = mean(control),
+                    y_pos = mean(y_pos),
+                    y_null = mean(y_null),
+                    y_neg = mean(y_neg))
+avg_a = data %>% 
+          filter(x >= 0) %>% 
+          summarize(c_avg = mean(control),
+                    y_pos = mean(y_pos),
+                    y_null = mean(y_null),
+                    y_neg = mean(y_neg))
+
+# graph positive effect
+ggplot(data, aes(x = x)) +
+  geom_vline(xintercept = 0, linetype = "longdash") +
+  labs(x = "Months from Income Change",
+       y = "Personally Experienced Inflation (%)") +
+  geom_segment(aes(x = -12, xend = 0, y = avg_b$c_avg, yend = avg_b$c_avg), color = "blue") +
+  geom_segment(aes(x = -12, xend = 0, y = avg_b$y_pos, yend = avg_b$y_pos), color = "red") +
+  geom_segment(aes(x = 0, xend = 12, y = avg_a$c_avg, yend = avg_a$c_avg), color = "blue") +
+  geom_segment(aes(x = 0, xend = 12, y = avg_a$y_pos, yend = avg_a$y_pos), color = "red") +
+  geom_point(aes(y = control), color = "blue", size = 3) +
+  geom_point(aes(y = y_pos), color = "red", size = 3)
+```
+
+## Possible Results: Null Effect
+
+```{r echo = F}
+
+# graph null effect
+ggplot(data, aes(x = x)) +
+  geom_vline(xintercept = 0, linetype = "longdash") +
+  labs(x = "Months from Income Change",
+       y = "Personally Experienced Inflation (%)") +
+  geom_segment(aes(x = -12, xend = 0, y = avg_b$c_avg, yend = avg_b$c_avg), color = "blue") +
+  geom_segment(aes(x = 0, xend = 12, y = avg_a$c_avg, yend = avg_a$c_avg), color = "blue") +
+  geom_segment(aes(x = -12, xend = 0, y = avg_b$y_null, yend = avg_b$y_null), color = "red") +
+  geom_segment(aes(x = 0, xend = 12, y = avg_a$y_null, yend = avg_a$y_null), color = "red") +
+  geom_point(aes(y = control), color = "blue", size = 3) +
+  geom_point(aes(y = y_null), color = "red", size = 3)
+```
+
+## Possible Results: Negative Effect
+
+```{r echo = F}
+# graph negative effect
+ggplot(data, aes(x = x)) +
+  geom_vline(xintercept = 0, linetype = "longdash") +
+  labs(x = "Months from Income Change",
+       y = "Personally Experienced Inflation (%)") +
+  geom_segment(aes(x = -12, xend = 0, y = avg_b$c_avg, yend = avg_b$c_avg), color = "blue") +
+  geom_segment(aes(x = 0, xend = 12, y = avg_a$c_avg, yend = avg_a$c_avg), color = "blue") +
+  geom_segment(aes(x = -12, xend = 0, y = avg_b$y_neg, yend = avg_b$y_neg), color = "red") +
+  geom_segment(aes(x = 0, xend = 12, y = avg_a$y_neg, yend = avg_a$y_neg), color = "red") +
+  geom_point(aes(y = control), color = "blue", size = 3) +
+  geom_point(aes(y = y_neg), color = "red", size = 3)
 
 
+```
 
-$$\pi_{t}^i = [\theta_{t}^{i\prime}P_{t} - \theta_{t-1}^{i\prime}P_{t-1}] [\theta_{t-1}^{i\prime}P_{t-1}]^{-1}$$
+
 
 
