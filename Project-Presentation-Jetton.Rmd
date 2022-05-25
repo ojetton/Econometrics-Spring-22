@@ -9,19 +9,23 @@ output:
 
 ```{r echo = F}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(pacman)
 ```
 
 ## Motivation
 
 Much is hidden in the Bureau of Labor Statistic’s monthly report of the Consumer Price Index that does not yield a holistic view of inflation’s effect on consumers and individuals in the U.S. economy.
 
-Literature review: 
-- Higher income individuals experience lower inflation through to access to product variety and innovation (Jaravel, 2017)
-- Lower income individuals experienced higher inflation for the costs of living during the Great Recession (Argente & Lee, 2015) 
+Literature review:   
+- Higher income individuals experience lower inflation through to access to product variety and innovation (Jaravel, 2017)   
+- Lower income individuals experienced higher inflation for the costs of living during the Great Recession (Argente & Lee, 2015)    
+
+No causal research... yet?
 
 ## Causal Question of Interest
 
-If someone experiences an increase to their income, how does this cause their personally experienced inflation to change?
+**If someone experiences an increase to their income, how does this cause their personally experienced inflation to change?**
 
 Calculation of personally experienced inflation:
 
@@ -34,10 +38,7 @@ $$\pi_{t}^i = [\theta_{t}^{i\prime}P_{t} - \theta_{t-1}^{i\prime}P_{t-1}] [\thet
 
 ```{r echo = F}
 
-library(pacman)
-p_load(tidyverse)
-
-p_load(ggdag)
+p_load(tidyverse, ggdag)  
 
 coordinates = list(
   x = c(N = 0, I = 1, B = 2, E = 3, P = 1.5, L = 2), # Node name = x coordinate for that node
@@ -65,15 +66,27 @@ ggdag(dag,
 ```
 
 
-
-
-
+Preferences & income | MPC | Income & Types of Goods | Locations & inflation shocks | Seasonal Shocks | Methods used 
 
 
 ## Ideal Experiment
 
+* Subjects: a large group of people with identical income streams, living in same location.
+* Track their consumption of individual goods perfectly
+* Randomly assign portion of group to receive a sizeable permanent pay increase
+* Continue to track the consumption of the treatment & control groups
+* Calculate personally experienced inflation & use diff-in-diff for point estimate
 
-## Practical Research Design
+
+## Practical Research Design (quasi-experimental)
+
+* Large city planning a pay increase for teachers in one district but not another (not unheard of)
+
+* With their permission, track their bank records before and after the pay raise (difficult but not impossible to obtain)
+
+* Calculate personally experienced inflation & use diff-in-diff for point estimate: $\beta_4$ from:
+
+$$\pi_t^i = \beta_0 + \beta_1 D_i + \beta_2 T_t + \beta_3 CPI_t + \beta_4 D_i T_t + \epsilon_{it} $$
 
 
 ## Possible Results: Positive Effect
@@ -84,10 +97,10 @@ set.seed(11131998)
 
 data = tibble(
   x = -12:12,
-  control = 2 + rnorm(25, 0, 0.2),
-  y_pos = if_else(x < 0, 2 + rnorm(25, 0, 0.2), 3 + rnorm(25, 0, 0.2)),
-  y_null = 2 + rnorm(25, 0, 0.2),
-  y_neg = if_else(x < 0, 2 + rnorm(25, 0, 0.2), 1 + rnorm(25, 0, 0.2))
+  control = 0.5 + rnorm(25, 0, 0.2),
+  y_pos = if_else(x < 0, 0.5 + rnorm(25, 0, 0.2), 1 + rnorm(25, 0, 0.2)),
+  y_null = 0.5 + rnorm(25, 0, 0.2),
+  y_neg = if_else(x < 0, 0.5 + rnorm(25, 0, 0.2), 0 + rnorm(25, 0, 0.2))
 )
 
 avg_b = data %>% 
@@ -119,7 +132,7 @@ ggplot(data, aes(x = x)) +
 ## Possible Results: Null Effect
 
 ```{r echo = F}
-
+ 
 # graph null effect
 ggplot(data, aes(x = x)) +
   geom_vline(xintercept = 0, linetype = "longdash") +
@@ -136,7 +149,7 @@ ggplot(data, aes(x = x)) +
 ## Possible Results: Negative Effect
 
 ```{r echo = F}
-# graph negative effect
+# graph negative effect 
 ggplot(data, aes(x = x)) +
   geom_vline(xintercept = 0, linetype = "longdash") +
   labs(x = "Months from Income Change",
@@ -151,6 +164,12 @@ ggplot(data, aes(x = x)) +
 
 ```
 
+## Sources & Extra
 
+[Argente, David and Munseob Lee, “*Cost of Living Inequality during the Great Recession*,” 2015](https://economicdynamics.org/meetpapers/2015/paper_1372.pdf)
+
+[Jaravel, Xavier, “*The unequal gains from product innovations: Evidence from the US retail sector*,” 2017](https://equitablegrowth.org/wp-content/uploads/2017/03/031417-WP-unequal-gains-from-product-innovations.pdf)
+
+[What's Your Rate of Inflation? NYT](https://www.nytimes.com/interactive/2022/05/08/business/economy/inflation-calculator.html)
 
 
